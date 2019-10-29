@@ -37,9 +37,47 @@ def load_users():
 def load_movies():
     """Load movies from u.item into database."""
 
+    print("Movies")
+
+    Movie.query.delete()
+
+    #     def parseDate(released_at):
+    #     date_str = released_at
+    #     fmt = "%d-%b-%Y"
+    #     date = datetime.strptime(date_str, fmt)
+
+    for row in open("seed_data/u.item"):
+        row = row.rstrip()
+        movie_id, title, released_at, space, imdb_url = row.split("|")[:5]
+
+        movie = Movie(movie_id=movie_id,
+                      title=title,
+                      released_at=released_at,
+                      imdb_url=imdb_url)
+
+        db.session.add(movie)
+
+    db.session.commit()
+
 
 def load_ratings():
     """Load ratings from u.data into database."""
+    print("Ratings")
+
+    Rating.query.delete()
+
+    for row in open("seed_data/u.data"):
+        row = row.rstrip()
+        user_id, movie_id, score, timestamp = row.split('\t')
+
+        rating = Rating(user_id=user_id,
+                        movie_id=movie_id,
+                        score=score)
+        db.session.add(rating)
+        
+    db.session.commit()
+
+
 
 
 def set_val_user_id():
