@@ -2,7 +2,7 @@
 
 from jinja2 import StrictUndefined
 
-from flask import Flask, render_template, redirect, request, flash, sessions
+from flask import Flask, render_template, redirect, request, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import User, Rating, Movie, connect_to_db, db
@@ -22,6 +22,9 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Homepage."""
+
+    if session['user']:
+        flash("Logged in")
     return render_template("homepage.html")
 
 
@@ -53,10 +56,19 @@ def register_process():
                              User.password == password).first()
     print(user)
 
+    # Add new user if not in database, else redirect to homepage
     if user == None:
-        return redirect('/')
+        new_user = User(email=email, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+        session['user'] = new_user.user_id
+        print('newuser')
+        print(session['user'])
     else:
-        return redirect('/')
+        session['user'] = user.user_id
+        print(session['user'])
+
+    return redirect('/')
 
 
 if __name__ == "__main__":
