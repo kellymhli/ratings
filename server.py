@@ -79,7 +79,7 @@ def logout():
     """Log user our of the session."""
 
     # Remove user from session
-    session.pop('user')
+    session.pop('user', None)
     flash("Logged out")
 
     return redirect('/')
