@@ -23,8 +23,12 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
 
-    if session['user']:
-        flash("Logged in")
+    # Display login and logout link depending on if user is logged in session.
+    if session.get('user') != None:
+        session['logged_in'] = True
+    else:
+        session['logged_in'] = False
+
     return render_template("homepage.html")
 
 
@@ -62,11 +66,21 @@ def register_process():
         db.session.add(new_user)
         db.session.commit()
         session['user'] = new_user.user_id
-        print('newuser')
-        print(session['user'])
     else:
         session['user'] = user.user_id
-        print(session['user'])
+        session['logged_in'] = True
+        flash("Logged in")
+
+    return redirect('/')
+
+
+@app.route('/logout')
+def logout():
+    """Log user our of the session."""
+
+    # Remove user from session
+    session.pop('user')
+    flash("Logged out")
 
     return redirect('/')
 
