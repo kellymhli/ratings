@@ -37,8 +37,6 @@ def user_list():
 def register_form():
     """Render register form."""
 
-
-
     return render_template("register_form.html")
 
 
@@ -46,7 +44,19 @@ def register_form():
 def register_process():
     """Process resgistration information."""
 
-    return redirect('/')
+    email = request.form.get("email")
+    password = request.form.get("password")
+    print(email, password)
+
+    # Check if user email and password are in the db
+    user = User.query.filter(User.email == email, 
+                             User.password == password).first()
+    print(user)
+
+    if user == None:
+        return redirect('/')
+    else:
+        return redirect('/')
 
 
 if __name__ == "__main__":
